@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 
-function formatPH(date) {
+type PartsResult = {
+  dateText: string;
+  hh: string;
+  mm: string;
+  ss: string;
+  period: string;
+};
+
+function formatPH(date: Date): PartsResult {
   const dateFmt = new Intl.DateTimeFormat("en-PH", {
     timeZone: "Asia/Manila",
     weekday: "long",
@@ -18,7 +26,8 @@ function formatPH(date) {
   });
 
   const parts = timeFmt.formatToParts(date);
-  const get = (type) => parts.find((p) => p.type === type)?.value ?? "";
+  const get = (type: Intl.DateTimeFormatPartTypes): string =>
+    parts.find((p) => p.type === type)?.value ?? "";
 
   return {
     dateText: dateFmt.format(date),
@@ -30,11 +39,11 @@ function formatPH(date) {
 }
 
 export default function PhilippineClock() {
-  const [now, setNow] = useState(() => new Date());
+  const [now, setNow] = useState<Date>(() => new Date());
 
   useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 250);
-    return () => clearInterval(t);
+    const t = window.setInterval(() => setNow(new Date()), 250);
+    return () => window.clearInterval(t);
   }, []);
 
   const { dateText, hh, mm, ss, period } = useMemo(() => formatPH(now), [now]);
