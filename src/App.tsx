@@ -20,7 +20,7 @@ export default function App() {
       </div>
       <footer className="justify-center flex">
         <div className="max-w-6xl mx-auto mt-12 text-sm text-slate-500">
-          all rights reserved © RC 2026.
+          All rights reserved © RC 2026.
            </div>
       </footer>
     </div>
