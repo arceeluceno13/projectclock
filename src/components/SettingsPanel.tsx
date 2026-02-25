@@ -27,8 +27,6 @@ export default function SettingsPanel({
   setShowCalendar,
   showCalculator,
   setShowCalculator,
-  awayTimerEnabled,
-  setAwayTimerEnabled,
   awayTimerAlarmEnabled,
   setAwayTimerAlarmEnabled,
   awayTimerAlarmSound,
