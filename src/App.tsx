@@ -5,11 +5,16 @@ import PHCalendar from "./components/PHCalendar";
 import Calculator from "./components/Calculator";
 import SettingsPanel from "./components/SettingsPanel";
 import uchiha from "./assets/uchiha.jpg";
+import type { AlarmSound } from "./utils/alarmSounds";
+
 
 export default function App() {
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [showCalendar, setShowCalendar] = useState<boolean>(false);
   const [showCalculator, setShowCalculator] = useState<boolean>(false);
+  const [awayTimerEnabled, setAwayTimerEnabled] = useState(true);
+  const [awayTimerAlarmEnabled, setAwayTimerAlarmEnabled] = useState(true);
+  const [awayTimerAlarmSound, setAwayTimerAlarmSound] = useState<AlarmSound>("beep");
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-6">
@@ -17,11 +22,11 @@ export default function App() {
         <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-semibold">
-                <img
-                  src={uchiha}
-                  alt="Uchiha"
-                  className="inline-block w-11 h-8 mr-2 -mt-1"
-                />
+              <img
+                src={uchiha}
+                alt="Uchiha"
+                className="inline-block w-11 h-8 mr-2 -mt-1"
+              />
             </h1>
           </div>
 
@@ -35,7 +40,10 @@ export default function App() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <PhilippineClock />
-          <AwayTimer30s />
+          <AwayTimer30s
+            alarmEnabled={awayTimerAlarmEnabled}
+            alarmSound={awayTimerAlarmSound}
+          />
           {showCalendar ? <PHCalendar /> : null}
 
 
@@ -53,6 +61,12 @@ export default function App() {
         setShowCalendar={setShowCalendar}
         showCalculator={showCalculator}
         setShowCalculator={setShowCalculator}
+        awayTimerEnabled={awayTimerEnabled}
+        setAwayTimerEnabled={setAwayTimerEnabled}
+        awayTimerAlarmEnabled={awayTimerAlarmEnabled}
+        setAwayTimerAlarmEnabled={setAwayTimerAlarmEnabled}
+        awayTimerAlarmSound={awayTimerAlarmSound}
+        setAwayTimerAlarmSound={setAwayTimerAlarmSound}
       />
     </div>
   );
