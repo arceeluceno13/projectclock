@@ -12,7 +12,10 @@ type AwayTimer30sProps = {
   alarmSound: AlarmSound;
 };
 
-export default function AwayTimer30s({ alarmEnabled, alarmSound }: AwayTimer30sProps) {
+export default function AwayTimer30s({
+  alarmEnabled,
+  alarmSound,
+}: AwayTimer30sProps) {
   const [enabled, setEnabled] = useState<boolean>(true);
   const [remainingMs, setRemainingMs] = useState<number>(DEFAULT_MS);
   const [away, setAway] = useState<boolean>(false);
@@ -27,7 +30,8 @@ export default function AwayTimer30s({ alarmEnabled, alarmSound }: AwayTimer30sP
     return { mm: Math.floor(totalSec / 60), ss: totalSec % 60, totalSec };
   }, [remainingMs]);
 
-  const isWarning = enabled && away && remaining.totalSec > 0 && remaining.totalSec <= WARNING_SECONDS;
+  const isWarning =
+    enabled && away && remaining.totalSec > 0 && remaining.totalSec <= WARNING_SECONDS;
 
   // Detect away (mouse leave OR tab hidden)
   useEffect(() => {
@@ -37,11 +41,13 @@ export default function AwayTimer30s({ alarmEnabled, alarmSound }: AwayTimer30sP
       if ((e as any).relatedTarget === null) setAway(true);
     };
 
-    const onVisibility = (): void => setAway(document.visibilityState !== "visible");
+    const onVisibility = (): void =>
+      setAway(document.visibilityState !== "visible");
 
     document.addEventListener("mouseover", onMouseOver);
     document.addEventListener("mouseout", onMouseOut);
     document.addEventListener("visibilitychange", onVisibility);
+
     onVisibility();
 
     return () => {
@@ -51,7 +57,7 @@ export default function AwayTimer30s({ alarmEnabled, alarmSound }: AwayTimer30sP
     };
   }, []);
 
-  // Reset when user comes back
+  // Reset when user returns
   useEffect(() => {
     if (!away) {
       setRemainingMs(DEFAULT_MS);
@@ -60,7 +66,7 @@ export default function AwayTimer30s({ alarmEnabled, alarmSound }: AwayTimer30sP
     }
   }, [away]);
 
-  // Reset if timer disabled
+  // Reset if disabled
   useEffect(() => {
     if (!enabled) {
       setRemainingMs(DEFAULT_MS);
@@ -100,10 +106,9 @@ export default function AwayTimer30s({ alarmEnabled, alarmSound }: AwayTimer30sP
     };
   }, [enabled, away, remainingMs, finished]);
 
-  // Warning ticks
+  // 3-sec warning
   useEffect(() => {
-    if (!isWarning) return;
-    if (!alarmEnabled) return;
+    if (!isWarning || !alarmEnabled) return;
 
     if (lastWarnedSecond.current !== remaining.totalSec) {
       lastWarnedSecond.current = remaining.totalSec;
@@ -111,7 +116,7 @@ export default function AwayTimer30s({ alarmEnabled, alarmSound }: AwayTimer30sP
     }
   }, [isWarning, remaining.totalSec, alarmEnabled, alarmSound]);
 
-  // Final alarm at 0
+  // Final alarm
   useEffect(() => {
     if (enabled && away && remaining.totalSec === 0 && !finished) {
       setFinished(true);
@@ -120,26 +125,25 @@ export default function AwayTimer30s({ alarmEnabled, alarmSound }: AwayTimer30sP
   }, [enabled, away, remaining.totalSec, finished, alarmEnabled, alarmSound]);
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-950/40">
+    <div className="rounded-3xl border border-slate-800 bg-slate-950/40 p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold">30s Away Timer</h2>
-          <p className="text-slate-600 dark:text-slate-400 text-sm">
+          <p className="text-slate-400 text-sm">
             Leaves tab = countdown. Return = reset.
           </p>
         </div>
-        <div className="items-center">
-          <span
-            className={[
-              "text-xs px-3 py-1 rounded-full border",
-              enabled
-                ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:text-emerald-300"
-                : "bg-slate-500/10 text-slate-700 border-slate-500/20 dark:text-slate-300",
-            ].join(" ")}
-          >
-            {enabled ? "ENABLED" : "DISABLED"}
-          </span>
-        </div>
+
+        <span
+          className={[
+            "text-xs px-3 py-1 rounded-full border",
+            enabled
+              ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20"
+              : "bg-slate-500/10 text-slate-300 border-slate-500/20",
+          ].join(" ")}
+        >
+          {enabled ? "ENABLED" : "DISABLED"}
+        </span>
       </div>
 
       <div
@@ -147,18 +151,38 @@ export default function AwayTimer30s({ alarmEnabled, alarmSound }: AwayTimer30sP
           "mt-6 rounded-3xl border p-6 text-center font-mono transition-all duration-200",
           isWarning
             ? "border-red-500 bg-red-500/10 animate-pulse"
-            : "border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/30",
+            : "border-slate-800 bg-slate-900/30",
         ].join(" ")}
       >
-        <div className={["text-5xl sm:text-6xl font-bold tabular-nums", isWarning ? "text-red-500" : ""].join(" ")}>
+        <div
+          className={[
+            "text-5xl sm:text-6xl font-bold tabular-nums",
+            isWarning ? "text-red-400" : "text-slate-100",
+          ].join(" ")}
+        >
           {pad2(remaining.mm)}:{pad2(remaining.ss)}
         </div>
 
-        {isWarning && <div className="mt-3 text-red-500 font-semibold">⚠ {remaining.totalSec} seconds left!</div>}
-        {finished && away && enabled && <div className="mt-4 text-rose-500 font-semibold">⏰ Time’s up!</div>}
+        <div className="mt-2 text-xs text-slate-500">
+          Alarm:{" "}
+          <span className="text-slate-300">
+            {alarmEnabled ? alarmSound : "OFF"}
+          </span>
+        </div>
+
+        {isWarning && (
+          <div className="mt-3 text-red-400 font-semibold">
+            ⚠ {remaining.totalSec} seconds left!
+          </div>
+        )}
+
+        {finished && away && enabled && (
+          <div className="mt-4 text-rose-400 font-semibold">
+            ⏰ Time’s up!
+          </div>
+        )}
       </div>
 
-      {/* ✅ Buttons stay here */}
       <div className="mt-6 flex gap-3 justify-center">
         <button
           onClick={() => setEnabled(true)}
@@ -173,10 +197,6 @@ export default function AwayTimer30s({ alarmEnabled, alarmSound }: AwayTimer30sP
         >
           Disable
         </button>
-      </div>
-
-      <div className="flex mt-4 text-xs text-slate-500 justify-center">
-        Alarm: <span className="text-slate-300">{alarmEnabled ? alarmSound : "OFF"}</span>
       </div>
     </div>
   );
