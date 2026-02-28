@@ -6,6 +6,7 @@ import Calculator from "./components/Calculator";
 import SettingsPanel from "./components/SettingsPanel";
 import uchiha from "./assets/uchiha.jpg";
 import type { AlarmSound } from "./utils/alarmSounds";
+import AlarmManager from "./components/AlarmManager";
 
 
 export default function App() {
@@ -52,6 +53,12 @@ export default function App() {
           ) : null}
 
         </div>
+
+        <div className="mt-6">
+          <AlarmManager />
+
+        </div>
+
       </div>
 
       <SettingsPanel
